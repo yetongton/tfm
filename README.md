@@ -1,14 +1,39 @@
+# Sistema de Análisis de Sentimiento de Noticias Urbanas de China
+
+## Estructura de directorios
+
+```
+CityNewsApp/
+├── city_news_app.py # Aplicación principal
+├── city_news.db # Base de datos SQLite
+├── run_app.bat # Archivo por lotes para iniciar la aplicación
+├── static/ # Archivo de recursos estáticos
+│ ├── css/ # Archivo de estilos CSS
+│ └── js/ # Archivo JavaScript
+├── templates/ # Archivo de plantilla HTML
+├── uploads/ # Directorio de archivos subidos por el usuario
+├── jieguo/ # Datos de resultados del análisis
+└── news_sentiment_model/ # Modelo de análisis de sentimiento BERT
+```
+
+## Guía de instalación
+
+1. Asegúrese de tener instalado Python 3.8 o superior.
+2. Instale las bibliotecas de Python necesarias:
+```
+pip install flask flask-login werkzeug pandas torch transformers
+```
+3. Asegúrese de que el archivo del modelo BERT esté correctamente ubicado en el directorio `news_sentiment_model`
+
+## Cómo usar
+
+1. Haga doble clic en el archivo por lotes `run_app.bat` para iniciar la aplicación.
+2. Visite `http://localhost:5000` en el navegador.
+3. Registre una cuenta e inicie sesión en el sistema.
+4. Explore los resultados del análisis de sentimiento de la ciudad o cargue datos de noticias para su análisis.
+
+
 # 中国城市新闻情感分析系统
-
-这是一个基于Flask的Web应用，用于分析中国城市新闻的情感倾向，帮助了解各城市的媒体形象。
-
-## 功能特点
-
-- 城市情感得分排名与可视化
-- 城市详细情感分析报告
-- 用户注册与登录
-- 新闻数据上传与分析
-- 使用BERT深度学习模型进行情感分析
 
 ## 目录结构
 
@@ -41,15 +66,3 @@ CityNewsApp/
 2. 在浏览器中访问`http://localhost:5000`
 3. 注册账户并登录系统
 4. 浏览城市情感分析结果或上传新闻数据进行分析
-
-## 数据格式
-
-上传的CSV文件需要包含以下至少一个字段：
-- `title`: 新闻标题
-- `content`: 新闻内容
-
-## 注意事项
-
-- 情感分析模型需要一定的计算资源，确保您的计算机有足够的内存
-- 上传的文件大小限制为16MB
-- 默认情况下，会过滤掉新闻数量少于5条的城市和情感得分为100的城市 
