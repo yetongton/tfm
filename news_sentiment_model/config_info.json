@@ -1,0 +1,20 @@
+{
+    "media_weights": {
+        "权威媒体": 1.5,
+        "社交媒体": 0.8
+    },
+    "model_type": "bert-base-chinese",
+    "num_labels": 3,
+    "label_map": {
+        "0": "负面",
+        "1": "中性",
+        "2": "正面"
+    },
+    "sentiment_map": {
+        "0": -1,
+        "1": 0,
+        "2": 1
+    },
+    "positive_keywords_count": 100,
+    "negative_keywords_count": 52
+}

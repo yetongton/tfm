@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>{{ upload.city }} - 分析结果</h2>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('profile') }}">个人中心</a></li>
+            <li class="breadcrumb-item active">{{ upload.city }} 分析结果</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">基本信息</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">城市名称</th>
+                            <td>{{ upload.city }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">情感分数</th>
+                            <td>{{ "%.2f"|format(upload.sentiment_score) }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">新闻数量</th>
+                            <td>{{ upload.news_count }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">上传时间</th>
+                            <td>{{ upload.uploaded_at }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">文件名</th>
+                            <td>{{ upload.filename }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">情感分布</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-4" style="height: 30px;">
+                    <div 
+                        class="progress-bar bg-success" 
+                        role="progressbar" 
+                        style="width: {{ upload.positive_pct }}%" 
+                        aria-valuenow="{{ upload.positive_pct }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100"
+                    >
+                        正面 {{ "%.2f"|format(upload.positive_pct) }}%
+                    </div>
+                    <div 
+                        class="progress-bar bg-warning" 
+                        role="progressbar" 
+                        style="width: {{ upload.neutral_pct }}%" 
+                        aria-valuenow="{{ upload.neutral_pct }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100"
+                    >
+                        中性 {{ "%.2f"|format(upload.neutral_pct) }}%
+                    </div>
+                    <div 
+                        class="progress-bar bg-danger" 
+                        role="progressbar" 
+                        style="width: {{ upload.negative_pct }}%" 
+                        aria-valuenow="{{ upload.negative_pct }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100"
+                    >
+                        负面 {{ "%.2f"|format(upload.negative_pct) }}%
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between text-center mt-5">
+                    <div class="p-3 border rounded">
+                        <h5 class="text-success">{{ "%.2f"|format(upload.positive_pct) }}%</h5>
+                        <small class="text-muted">正面新闻</small>
+                    </div>
+                    <div class="p-3 border rounded">
+                        <h5 class="text-warning">{{ "%.2f"|format(upload.neutral_pct) }}%</h5>
+                        <small class="text-muted">中性新闻</small>
+                    </div>
+                    <div class="p-3 border rounded">
+                        <h5 class="text-danger">{{ "%.2f"|format(upload.negative_pct) }}%</h5>
+                        <small class="text-muted">负面新闻</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">分析结论</h5>
+    </div>
+    <div class="card-body">
+        <p>基于对{{ upload.city }}的{{ upload.news_count }}条新闻的情感分析，该城市的整体情感分数为{{ "%.2f"|format(upload.sentiment_score) }}。</p>
+        
+        {% if upload.sentiment_score >= 80 %}
+        <p>该城市的新闻情感整体非常积极，正面新闻占比达到{{ "%.2f"|format(upload.positive_pct) }}%，远高于负面新闻。这表明该城市的公共形象和新闻报道整体呈现出非常积极的态势。</p>
+        {% elif upload.sentiment_score >= 60 %}
+        <p>该城市的新闻情感整体较为积极，正面新闻占比为{{ "%.2f"|format(upload.positive_pct) }}%，高于负面新闻。这表明该城市的公共形象和新闻报道整体呈现出积极的态势。</p>
+        {% elif upload.sentiment_score >= 40 %}
+        <p>该城市的新闻情感整体中性偏积极，正面新闻占比为{{ "%.2f"|format(upload.positive_pct) }}%，负面新闻占比为{{ "%.2f"|format(upload.negative_pct) }}%。这表明该城市的公共形象和新闻报道呈现出较为平衡的态势。</p>
+        {% else %}
+        <p>该城市的新闻情感整体偏负面，负面新闻占比达到{{ "%.2f"|format(upload.negative_pct) }}%，高于正面新闻。这表明该城市的公共形象和新闻报道整体呈现出较为负面的态势。</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="d-flex justify-content-between">
+    <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">返回个人中心</a>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">上传新数据</a>
+</div>
+{% endblock %} 

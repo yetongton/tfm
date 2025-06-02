@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">上传城市新闻数据</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="city" class="form-label">城市名称</label>
+                        <input type="text" class="form-control" id="city" name="city" required>
+                        <div class="form-text">请输入您要分析的城市名称，例如：北京、上海、广州等</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label">新闻数据文件 (CSV格式)</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                        <div class="form-text">
+                            请上传CSV格式的城市新闻数据文件，文件应包含新闻标题、内容等信息。
+                            文件大小不超过16MB。
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">CSV文件格式说明：</h6>
+                        <p class="mb-0">文件应包含以下列：</p>
+                        <ul class="mb-0">
+                            <li>title: 新闻标题</li>
+                            <li>content: 新闻内容</li>
+                            <li>date: 发布日期 (可选)</li>
+                            <li>source: 新闻来源 (可选)</li>
+                        </ul>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">上传并分析</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,211 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">{{ translate('home') }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('cities') }}">{{ translate('city_list') }}</a></li>
+                <li class="breadcrumb-item active">{{ translate_city(city.city) }}</li>
+            </ol>
+        </nav>
+        <h2 class="mb-0">{{ translate_city(city.city) }} <small class="text-muted">{{ translate('sentiment_analysis_details') }}</small></h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{{ translate('ranking_situation') }}</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-1 fw-bold mb-3">
+                        {% if city.rank <= 10 %}
+                        <span class="text-success">{{ city.rank }}</span>
+                        {% elif city.rank <= 30 %}
+                        <span class="text-primary">{{ city.rank }}</span>
+                        {% elif city.rank >= 75 %}
+                        <span class="text-danger">{{ city.rank }}</span>
+                        {% else %}
+                        <span class="text-secondary">{{ city.rank }}</span>
+                        {% endif %}
+                    </div>
+                    <h5 class="text-muted">{{ translate('national_ranking') }}</h5>
+                    
+                    <div class="progress mt-4" style="height: 10px;">
+                        <div class="progress-bar bg-primary" role="progressbar" 
+                             style="width: {{ 100 - ((city.rank - 1) / 100 * 100) }}%">
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ translate('better_than', 100 - city.rank) }}</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">{{ translate('sentiment_score') }}</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-1 fw-bold mb-3">
+                        {% if city.sentiment_score >= 80 %}
+                        <span class="text-success">{{ "%.1f"|format(city.sentiment_score) }}</span>
+                        {% elif city.sentiment_score >= 60 %}
+                        <span class="text-primary">{{ "%.1f"|format(city.sentiment_score) }}</span>
+                        {% elif city.sentiment_score >= 40 %}
+                        <span class="text-warning">{{ "%.1f"|format(city.sentiment_score) }}</span>
+                        {% else %}
+                        <span class="text-danger">{{ "%.1f"|format(city.sentiment_score) }}</span>
+                        {% endif %}
+                    </div>
+                    <h5 class="text-muted">{{ translate('sentiment_score') }} (0-100)</h5>
+                    
+                    <div class="progress mt-4" style="height: 10px;">
+                        {% if city.sentiment_score >= 80 %}
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ city.sentiment_score }}%"></div>
+                        {% elif city.sentiment_score >= 60 %}
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ city.sentiment_score }}%"></div>
+                        {% elif city.sentiment_score >= 40 %}
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ city.sentiment_score }}%"></div>
+                        {% else %}
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ city.sentiment_score }}%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">{{ translate('statistics') }}</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <th>{{ translate('news_count') }}</th>
+                                <td class="text-end fw-bold">{{ city.news_count }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ translate('positive_news_ratio') }}</th>
+                                <td class="text-end fw-bold text-success">{{ "%.2f"|format(city.positive_pct) }}%</td>
+                            </tr>
+                            <tr>
+                                <th>{{ translate('negative_news_ratio') }}</th>
+                                <td class="text-end fw-bold text-danger">{{ "%.2f"|format(city.negative_pct) }}%</td>
+                            </tr>
+                            <tr>
+                                <th>{{ translate('neutral_news_ratio') }}</th>
+                                <td class="text-end fw-bold text-warning">{{ "%.2f"|format(city.neutral_pct) }}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center mt-3">
+                        <span class="badge bg-success px-3 py-2 me-1">{{ translate('positive') }}: {{ "%.1f"|format(city.positive_pct) }}%</span>
+                        <span class="badge bg-warning px-3 py-2 me-1">{{ translate('neutral') }}: {{ "%.1f"|format(city.neutral_pct) }}%</span>
+                        <span class="badge bg-danger px-3 py-2">{{ translate('negative') }}: {{ "%.1f"|format(city.negative_pct) }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">{{ translate('sentiment_distribution') }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="progress mb-4" style="height: 30px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ city.positive_pct }}%">
+                    {{ translate('positive') }} {{ "%.1f"|format(city.positive_pct) }}%
+                </div>
+                <div class="progress-bar bg-warning" role="progressbar"
+                     style="width: {{ city.neutral_pct }}%">
+                    {{ translate('neutral') }} {{ "%.1f"|format(city.neutral_pct) }}%
+                </div>
+                <div class="progress-bar bg-danger" role="progressbar"
+                     style="width: {{ city.negative_pct }}%">
+                    {{ translate('negative') }} {{ "%.1f"|format(city.negative_pct) }}%
+                </div>
+            </div>
+
+            <div class="row text-center mt-4">
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h2 class="text-success fw-bold">{{ "%.1f"|format(city.positive_pct) }}%</h2>
+                            <p class="text-muted mb-0">{{ translate('positive_news') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h2 class="text-warning fw-bold">{{ "%.1f"|format(city.neutral_pct) }}%</h2>
+                            <p class="text-muted mb-0">{{ translate('neutral_news') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-danger">
+                        <div class="card-body">
+                            <h2 class="text-danger fw-bold">{{ "%.1f"|format(city.negative_pct) }}%</h2>
+                            <p class="text-muted mb-0">{{ translate('negative_news') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">{{ translate('analysis_conclusion') }}</h5>
+        </div>
+        <div class="card-body">
+            <p class="lead">{{ translate('analysis_summary', translate_city(city.city), city.news_count, "%.2f"|format(city.sentiment_score), city.rank) }}</p>
+            
+            <div class="alert 
+                {% if city.sentiment_score >= 80 %}
+                alert-success
+                {% elif city.sentiment_score >= 60 %}
+                alert-primary
+                {% elif city.sentiment_score >= 40 %}
+                alert-warning
+                {% else %}
+                alert-danger
+                {% endif %}">
+                {% if city.sentiment_score >= 80 %}
+                <i class="fas fa-thumbs-up me-2"></i>{{ translate('very_positive', "%.2f"|format(city.positive_pct)) }}
+                {% elif city.sentiment_score >= 60 %}
+                <i class="fas fa-smile me-2"></i>{{ translate('positive_sentiment', "%.2f"|format(city.positive_pct)) }}
+                {% elif city.sentiment_score >= 40 %}
+                <i class="fas fa-meh me-2"></i>{{ translate('neutral_sentiment', "%.2f"|format(city.positive_pct), "%.2f"|format(city.negative_pct)) }}
+                {% else %}
+                <i class="fas fa-frown me-2"></i>{{ translate('negative_sentiment', "%.2f"|format(city.negative_pct)) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a href="{{ url_for('cities') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>{{ translate('back_to_list') }}
+        </a>
+        
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('upload') }}" class="btn btn-primary">
+            <i class="fas fa-upload me-2"></i>{{ translate('upload_city_news', translate_city(city.city)) }}
+        </a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>{{ translate('login_to_upload') }}
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
